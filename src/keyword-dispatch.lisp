@@ -6,7 +6,8 @@
            #:not-implemented
            #:add-specializer
            #:define-keyword-generic
-           #:define-keyword-method)
+           #:define-keyword-method
+           #:keyword-dispatch-function-specializers)
   (:export #:keyword-function-not-implemented
            #:keyword-function-not-implemented-arguments
            #:keyword-function-not-implemented-function))
@@ -16,6 +17,7 @@
 (defclass keyword-dispatch-function ()
   ((specializers
     :initform nil
+    :accessor keyword-dispatch-function-specializers
     :documentation "Internal structure to find specializers"))
   (:metaclass closer-mop:funcallable-standard-class)
   (:documentation

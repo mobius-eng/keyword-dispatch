@@ -1,8 +1,75 @@
 * Keyword-Dispatch 
 
+This is a simple implementation of functions of keyword arguments that
+can be generically dispatched based on what keywords are
+present. Note, these functions are not necessarily fast and thus have
+quite a niche application.
+
 ** Usage
 
-** Installation
+Clone the project into =local-projects= location of QUICKLISP via
+
+#+BEGIN_QUOTE
+git clone https://github.com/mobius-eng/keyword-dispatch.git
+#+END_QUOTE
+
+Then in Common Lisp REPL:
+
+#+BEGIN_SRC lisp
+  (ql:quickload :keyword-dispatch)
+  (use-package 'keyword-dispatch)
+#+END_SRC
+
+
+To define a new keyword-generic function
+
+#+BEGIN_SRC lisp
+  (define-keyword-generic named-add
+      "Adds named arguments")
+#+END_SRC
+
+This will create (fbound) function =NAMED-ADD=. Function value of it
+(=#'NAMED-ADD=) is of type =KEYWORD-DISPATCH-FUNCTION=.
+
+To add methods:
+
+#+BEGIN_SRC lisp
+  (define-keyword-method named-add (:x) (&key x &allow-other-keys)
+    x)
+
+  (define-keyword-method name-add (:x :y) (&key x y &allow-other-keys)
+    (+ x y))
+
+  ;; Something rather strange:
+  (define-keyword-method named-add (:z) (&key z &allow-other-keys)
+    (* z 2))
+#+END_SRC
+
+You can inspect the internals of =NAMED-ADD= by evaluating/inspecting
+=(KEYWORD-DISPATCH-FUNCTION-SPECIALIZERS #'NAMED-ADD)=.
+
+Function =NAME-ADD= can be used as any other Lisp function:
+
+#+BEGIN_SRC lisp
+  (named-add :x 10) ; => 10
+
+  (named-add :x 20 :y 30) ; => 50
+
+  ;; Will specialize on Z argument:
+  ;; Later added specializations take
+  ;; priority
+  (named-add :x 10 :y 20 :z 50) ; => 100
+#+END_SRC
+
+** Limitations
+So far there is no way to remove a specialization. But the whole
+keyword-generic function can be removed via =FMAKUNBOUND=.
+
+The order of specializing arguments in definition matters: the first
+argument will take priority. Also, and a bit more subtle: the order of
+definitions matters with later definitions taking priority. This is
+not so much of limitation but a particular way (albeit, very simple
+one) of avoiding ambiguity.
 
 ** Author
 
@@ -13,5 +80,4 @@
 Copyright (c) 2016 Alexey Cherkaev
 
 ** License
-
 Licensed under the BSD License.
