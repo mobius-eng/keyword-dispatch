@@ -71,6 +71,10 @@ definitions matters with later definitions taking priority. This is
 not so much of limitation but a particular way (albeit, very simple
 one) of avoiding ambiguity.
 
+Tested on SBCL 1.3.7 (using =sbcl-bin= of =roswell= in Ubuntu). But it
+does not depende on any idiosyncrasies of SBCL, so should work on
+other implementations as well.
+
 ** Author
 
 + Alexey Cherkaev
